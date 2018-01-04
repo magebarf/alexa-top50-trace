@@ -28,5 +28,5 @@ curl --url https://www.alexa.com/topsites | grep "href=\"/siteinfo/" | sed 's/<a
 #	-a for AS# resolution
 # 	-w 2 for shorter than default (5) timeout
 while read u; do
-	traceroute -a -w 2 $u > $1/$u.trace
+	traceroute -a -w 2 $u &> $1/$u.trace &
 done <$1/sitelist
