@@ -78,6 +78,17 @@ runlog "Time of run: `date`" true
 # Additional arguments:
 #	-a for AS# resolution
 # 	-w 2 for shorter than default (5) timeout
+
+parallell_reset=4
+parallell_runs=0
+
 while read u; do
-	traceroute -a -w 2 $u &> $1/$u.trace &
-done <$1/sitelist
+	runlog "`date` - Tracerouting $u"
+	[ $parallell_runs -eq 0 ] && parallell_runs=$parallell_reset
+	traceroute -a -w 2 $u > $rundir/$u.trace 2>&1 &
+	let "parallell_runs -= 1"
+	[ $parallell_runs -eq 0 ] && wait
+done <$sitelist
+
+[ $parallell_runs -ne 0 ] && wait
+
