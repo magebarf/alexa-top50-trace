@@ -7,7 +7,7 @@
 # logging the results to individual files
 
 usage() {
-	echo usage: `basename $0` 'runname' 1>&2
+	echo usage: `basename $0` '[-gzip] [-listfile filename] runname' 1>&2
 	exit 1
 }
 
@@ -17,12 +17,53 @@ errquit() {
 	exit 1
 }
 
+# Check that there are arguments, otherwise something is wrong
 [ $# -lt 1 ] && errquit "Wrong number of arguments" true
 
-[ -a $1 ] && errquit "There exists a run with the name already"
+# Set default assumptions on script execution
+compress=NO		# Create a gzip file from folder after execution
+fetchalexa=YES	# Fetch the alexa top 50 list, disabled if a list file is provided
+key="$1" # If only one argument, store runid as key for later
 
-mkdir $1
-curl --url https://www.alexa.com/topsites | grep "href=\"/siteinfo/" | sed 's/<a href="\/siteinfo\/\(.*\)">.*/\1/g' > $1/sitelist
+# Handle script arguments
+while [[ $# -gt 0 ]]
+do
+	key="$1"
+
+	case $key in
+		-gzip)
+		compress=YES
+		shift
+		;;
+		-listfile)
+		listfile="$2"
+		fetchalexa=NO
+		shift
+		shift
+		;;
+		*) # Unknown option, should only be the rundir
+		shift
+		;;
+	esac
+done
+
+# Rundir needs to be last parameter
+rundir=$key
+logfile="$rundir/run.log"
+# If no listfile provided, default to alexa.sitelist that is to be fetched
+[ -z ${listfile=$rundir/alexa.sitelist} ]
+sitelist=$listfile
+
+# Output parsed input parameters
+echo Compress = $compress
+echo Fetch Alexa = $fetchalexa
+echo Rundir = $rundir
+echo Sitelist = $sitelist
+
+[ -e $rundir ] && errquit "There exists a run with the name already"
+
+mkdir $rundir
+[ $fetchalexa == "YES" ] && curl --url https://www.alexa.com/topsites | grep "href=\"/siteinfo/" | sed 's/<a href="\/siteinfo\/\(.*\)">.*/\1/g' > $sitelist
 
 # Additional arguments:
 #	-a for AS# resolution
