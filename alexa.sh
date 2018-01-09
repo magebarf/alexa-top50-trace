@@ -17,6 +17,11 @@ errquit() {
 	exit 1
 }
 
+runlog() {
+	echo $1
+	[ $# -gt 1 ] && echo $1 >> $logfile
+}
+
 # Check that there are arguments, otherwise something is wrong
 [ $# -lt 1 ] && errquit "Wrong number of arguments" true
 
@@ -58,11 +63,16 @@ sitelist=$listfile
 echo Compress = $compress
 echo Fetch Alexa = $fetchalexa
 echo Rundir = $rundir
+echo Logfile = $logfile
 echo Sitelist = $sitelist
 
 [ -e $rundir ] && errquit "There exists a run with the name already"
 
 mkdir $rundir
+touch logfile
+runlog "Created run directory" true
+runlog "Time of run: `date`" true
+
 [ $fetchalexa == "YES" ] && curl --url https://www.alexa.com/topsites | grep "href=\"/siteinfo/" | sed 's/<a href="\/siteinfo\/\(.*\)">.*/\1/g' > $sitelist
 
 # Additional arguments:
