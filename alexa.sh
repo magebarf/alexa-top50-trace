@@ -21,8 +21,8 @@ errquit() {
 }
 
 runlog() {
-	echo $1
-	[ $# -gt 1 ] && echo $1 >> $logfile
+	echo $1 >> $logfile
+	[ $# -gt 1 ] && echo $1
 }
 
 # Check that there are arguments, otherwise something is wrong
@@ -86,9 +86,9 @@ parallell_reset=4
 parallell_runs=0
 
 while read u; do
-	runlog "`date` - Tracerouting $u"
-	[ $parallell_runs -eq 0 ] && parallell_runs=$parallell_reset
+	runlog "`date` - Tracerouting $u" true
 	traceroute -a -w 2 $u > $rundir/$u.trace 2>&1 &
+	[ $parallell_runs -eq 0 ] && parallell_runs=$parallell_reset
 	let "parallell_runs -= 1"
 	[ $parallell_runs -eq 0 ] && wait
 done <$sitelist
