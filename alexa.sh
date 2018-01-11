@@ -8,6 +8,9 @@
 
 usage() {
 	echo usage: `basename $0` '[-gzip] [-listfile filename] runname' 1>&2
+	echo '  -gzip:     compress run folder into .gzip file after done' 1>&2
+	echo '  -listfile: provide your own list of domains to perform traceroute to' 1>&2
+	echo '  runname:   folder name where all output files will be stored'
 	exit 1
 }
 
@@ -26,9 +29,9 @@ runlog() {
 [ $# -lt 1 ] && errquit "Wrong number of arguments" true
 
 # Set default assumptions on script execution
-compress=NO		# Create a gzip file from folder after execution
-fetchalexa=YES	# Fetch the alexa top 50 list, disabled if a list file is provided
-key="$1" # If only one argument, store runid as key for later
+compress=NO       # Create a gzip file from folder after execution
+fetchalexa=YES	  # Fetch the alexa top 50 list, disabled if a list file is provided
+key="$1"          # If only one argument, store runid as key for later
 
 # Handle script arguments
 while [[ $# -gt 0 ]]
