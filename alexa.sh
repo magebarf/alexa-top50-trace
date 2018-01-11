@@ -7,9 +7,10 @@
 # logging the results to individual files
 
 usage() {
-	echo usage: `basename $0` '[-gzip] [-listfile filename] runname' 1>&2
+	echo usage: `basename $0` '[-gzip] [-listfile filename] [-j <n>] runname' 1>&2
 	echo '  -gzip:     compress run folder into .gzip file after done' 1>&2
 	echo '  -listfile: provide your own list of domains to perform traceroute to' 1>&2
+	echo '  -j <n>:    number of parallell traceroute operations launched simultaneously' 1>&2
 	echo '  runname:   folder name where all output files will be stored'
 	exit 1
 }
@@ -31,6 +32,7 @@ runlog() {
 # Set default assumptions on script execution
 compress=NO       # Create a gzip file from folder after execution
 fetchalexa=YES	  # Fetch the alexa top 50 list, disabled if a list file is provided
+parallell_reset=4 # Number of paralell traceroutes launched simulatneously
 key="$1"          # If only one argument, store runid as key for later
 
 # Handle script arguments
@@ -49,6 +51,10 @@ do
 		shift
 		shift
 		;;
+		-j)
+		parallell_reset="$2"
+		shift
+		shift
 		*) # Unknown option, should only be the rundir
 		shift
 		;;
@@ -82,7 +88,6 @@ runlog "Time of run: `date`" true
 #	-a for AS# resolution
 # 	-w 2 for shorter than default (5) timeout
 
-parallell_reset=4
 parallell_runs=0
 
 while read u; do
