@@ -55,6 +55,7 @@ do
 		parallell_reset="$2"
 		shift
 		shift
+		;;
 		*) # Unknown option, should only be the rundir
 		shift
 		;;
