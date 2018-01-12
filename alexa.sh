@@ -101,3 +101,10 @@ done <$sitelist
 
 [ $parallell_runs -ne 0 ] && wait
 
+if [ $compress == "YES" ]
+then
+	compressfile=$rundir.tar.gz
+	runlog "Gzip flag found, compressing directory to $compressfile"
+	tar -zcvf $compressfile $rundir
+	rm -rf ./$rundir
+fi
