@@ -1,0 +1,4 @@
+*.trace
+*.tar.gz
+*.sitelist
+*.log
